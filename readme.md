@@ -1,5 +1,7 @@
 # JSON Streams
 
+[![GoDoc](https://godoc.org/github.com/bserdar/jsonstream)](https://godoc.org/github.com/bserdar/jsonstream)
+
 This library supports streaming JSON streaming conventions described
 in this [Wikipedia page](https://en.wikipedia.org/wiki/JSON_streaming).
 
