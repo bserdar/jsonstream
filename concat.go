@@ -36,9 +36,10 @@ func (r ConcatReader) ReadRaw() ([]byte, error) {
 	return []byte(m), nil
 }
 
-// Unmarshal the next  document from the input. Returns unmarshal
-// error if there is any. If the end of stream is reached, returns
-// io.EOF
+// Unmarshal the next document from the input. Returns unmarshal error
+// if there is any. If the end of stream is reached, returns
+// io.EOF. If there is an error during unmarshaling, the rest of the
+// stream cannot be recovered.
 func (r ConcatReader) Unmarshal(out interface{}) error {
 	if r.err != nil {
 		return r.err

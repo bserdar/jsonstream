@@ -9,7 +9,7 @@ import (
 	"unicode"
 )
 
-// LinePrefixedReader reads  documents delimited with the
+// LenPrefixedReader reads  documents delimited with the
 // length of the next record. The input looks like this:
 //
 //  18{"some":"thing\n"}55{"may":{"include":"nested","objects":["and","arrays"]}}
