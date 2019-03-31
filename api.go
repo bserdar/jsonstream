@@ -1,7 +1,7 @@
-// Package jsonstream deals with streaming JSON input/output
-//
-// This package implements four ways of streaming JSON data, as
-// described here:
+// Package jsonstream deals with streaming JSON input/output. Supports
+// line delimited (NDJSON) JSON,  length-prefixed JSON,
+// record separator delimited JSON, and
+// concatenated JSON streams.
 //
 // https://en.wikipedia.org/wiki/JSON_streaming
 //
