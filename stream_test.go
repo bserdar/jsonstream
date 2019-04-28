@@ -51,7 +51,7 @@ func TestND(t *testing.T) {
 		str.WriteRune('\n')
 	}
 
-	reader := NewJSONLReader(bytes.NewReader(str.Bytes()))
+	reader := NewLineReader(bytes.NewReader(str.Bytes()))
 	var x marshalTestType
 	for _, d := range testData1 {
 		err := reader.Unmarshal(&x)
@@ -68,7 +68,7 @@ func TestND(t *testing.T) {
 		t.Errorf("No eof")
 	}
 
-	testRaw(NewJSONLReader(bytes.NewReader(str.Bytes())), raw, t)
+	testRaw(NewLineReader(bytes.NewReader(str.Bytes())), raw, t)
 }
 
 func TestConcat(t *testing.T) {
@@ -80,7 +80,7 @@ func TestConcat(t *testing.T) {
 		str.Write(x)
 	}
 
-	reader := NewJSONConcatReader(bytes.NewReader(str.Bytes()))
+	reader := NewConcatReader(bytes.NewReader(str.Bytes()))
 	var x marshalTestType
 	for _, d := range testData1 {
 		err := reader.Unmarshal(&x)
@@ -97,7 +97,37 @@ func TestConcat(t *testing.T) {
 		t.Errorf("No eof")
 	}
 
-	testRaw(NewJSONConcatReader(bytes.NewReader(str.Bytes())), raw, t)
+	testRaw(NewConcatReader(bytes.NewReader(str.Bytes())), raw, t)
+}
+
+func TestConcatWithSpaces(t *testing.T) {
+	str := bytes.Buffer{}
+	raw := make([][]byte, 0)
+	for _, d := range testData1 {
+		x, _ := json.Marshal(d)
+		raw = append(raw, x)
+		str.Write(x)
+		str.WriteString("   \n   ")
+	}
+
+	reader := NewConcatReader(bytes.NewReader(str.Bytes()))
+	var x marshalTestType
+	for _, d := range testData1 {
+		err := reader.Unmarshal(&x)
+		if err != nil {
+			t.Errorf("Cannot unmarshal: %v", err)
+		}
+		if x != d {
+			t.Errorf("Expected %+v got %+v", d, x)
+		}
+	}
+	// Must get eof
+	err := reader.Unmarshal(&x)
+	if err != io.EOF {
+		t.Errorf("No eof")
+	}
+
+	testRaw(NewConcatReader(bytes.NewReader(str.Bytes())), raw, t)
 }
 
 func TestSeq(t *testing.T) {
@@ -110,7 +140,7 @@ func TestSeq(t *testing.T) {
 		str.WriteRune('\x1e')
 	}
 
-	reader := NewJSONSeqReader(bytes.NewReader(str.Bytes()))
+	reader := NewSeqReader(bytes.NewReader(str.Bytes()))
 	var x marshalTestType
 	for _, d := range testData1 {
 		err := reader.Unmarshal(&x)
@@ -127,7 +157,7 @@ func TestSeq(t *testing.T) {
 		t.Errorf("No eof")
 	}
 
-	testRaw(NewJSONSeqReader(bytes.NewReader(str.Bytes())), raw, t)
+	testRaw(NewSeqReader(bytes.NewReader(str.Bytes())), raw, t)
 }
 
 func TestLenPrefixed(t *testing.T) {
@@ -140,7 +170,7 @@ func TestLenPrefixed(t *testing.T) {
 		str.Write(x)
 	}
 
-	reader := NewJSONLenPrefixedReader(bytes.NewReader(str.Bytes()))
+	reader := NewLenPrefixedReader(bytes.NewReader(str.Bytes()))
 	var x marshalTestType
 	for _, d := range testData1 {
 		err := reader.Unmarshal(&x)
@@ -157,5 +187,5 @@ func TestLenPrefixed(t *testing.T) {
 		t.Errorf("No eof")
 	}
 
-	testRaw(NewJSONLenPrefixedReader(bytes.NewReader(str.Bytes())), raw, t)
+	testRaw(NewLenPrefixedReader(bytes.NewReader(str.Bytes())), raw, t)
 }
